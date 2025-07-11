@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Models\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ModelSection extends Model
+class UserOptionsAnswer extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'se_name',
-        'se_percentage',
-        'se_fo_id'
+        'uso_us_id',
+        'uso_op_id'
     ];
-
 }

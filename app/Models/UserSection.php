@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Models\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ModelUserOptionAnswer extends Model
+class UserSection extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'uso_us_id',
-        'uso_op_id'
+        'uss_name',
+        'uss_usf_id'
     ];
-
 }

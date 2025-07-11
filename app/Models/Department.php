@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ModelDepartment extends Model
+class Department extends Model
 {
     use HasFactory;
 
@@ -14,4 +14,8 @@ class ModelDepartment extends Model
         'de_dane'
     ];
 
+    public function cities()
+    {
+        return $this->hasMany(City::class, 'ci_de_id');
+    }
 }

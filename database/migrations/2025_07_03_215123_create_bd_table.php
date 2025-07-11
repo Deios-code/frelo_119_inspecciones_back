@@ -36,11 +36,17 @@ return new class extends Migration
             $table->enum('us_type_document', ['CEDULA', 'PASAPORTE']);
             $table->bigInteger('us_document')->unique();
             $table->string('us_address', 255);
+            $table->date('us_birthday')->nullable();
             $table->bigInteger('us_phone')->unique();
             $table->enum('us_habeas_data', ['SI', 'NO']);
             $table->enum('us_exoneration', ['SI', 'NO'])->nullable();
             $table->string('us_email', 255)->unique();
             $table->string('us_password', 255);
+            $table->foreignId('us_ci_id')
+                ->constrained('cities')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->timestamps();
             $table->rememberToken();
             $table->timestamps();
         });
