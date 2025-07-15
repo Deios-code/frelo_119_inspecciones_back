@@ -14,6 +14,8 @@ class Station extends Model
         'st_nit',
         'st_address',
         'st_phone',
+        'st_longitude',
+        'st_latitude',
         'st_user_id',
         'st_ci_id'
     ];

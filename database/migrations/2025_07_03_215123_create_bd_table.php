@@ -54,16 +54,17 @@ return new class extends Migration
         Schema::create('stations', function (Blueprint $table) {
             $table->id();
             $table->string('st_name', 255);
-            $table->integer('st_nit')->unique();
+            $table->integer('st_nit')->unique()->nullable();
             $table->string('st_address', 255);
-            $table->bigInteger('st_phone');
+            $table->string('st_longitude', 255)->nullable()->unique();
+            $table->string('st_latitude', 255)->nullable()->unique();
+            $table->bigInteger('st_phone')->unique()->nullable();
             $table->foreignId('st_user_id')
                 ->nullable()
                 ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('set null');
             $table->foreignId('st_ci_id')
-                ->nullable()
                 ->constrained('cities')
                 ->onUpdate('cascade')
                 ->onDelete('set null');
