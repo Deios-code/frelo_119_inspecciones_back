@@ -3,7 +3,6 @@
 //* controllers
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\ResponseApiController;
 
 //* libraries
 use Illuminate\Http\Request;
@@ -12,7 +11,7 @@ use Firebase\JWT\Key;
 
 class ManageTokenController extends Controller
 {
-    
+
     //* generate token for postman
     public function generateTokenPostman(Request $request)
     {
@@ -31,7 +30,7 @@ class ManageTokenController extends Controller
     {
         try {
             $jwt = substr($request->header('Authorization'), 7);
-            
+
             $decoded = JWT::decode($jwt, new Key(env('APP_KEY'), 'HS256'));
 
             return $this->response_success([

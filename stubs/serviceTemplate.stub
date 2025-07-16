@@ -2,7 +2,7 @@
 
 namespace App\Services\{{folder}};
 
-class {{name}}
+class {{name}}Service
 {
 
 }

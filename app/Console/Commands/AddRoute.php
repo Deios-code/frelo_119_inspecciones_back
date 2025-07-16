@@ -5,29 +5,36 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class AddService extends Command
+class AddRoute extends Command
 {
-    protected $signature = 'add:service {ruta}';
-    protected $description = 'Crear un servicio dentro de la carpeta Services';
+    protected $signature = 'add:route {name}';
 
+    protected $description = 'Genera ruta';
+
+    /**
+     * Execute the console command.
+     */
     public function handle()
     {
-        $ruta = $this->argument('ruta');
+        $ruta = $this->argument('name');
         $partesRuta = explode('/', $ruta);
         $name = end($partesRuta);
         array_pop($partesRuta);
         $folder = implode(',', $partesRuta);
-        $path = app_path("Services/{$folder}/{$name}Service.php");
-        $stub = base_path("stubs/serviceTemplate.stub");
+        $path = base_path("Routes/api/{$name}.php");
+        if(!empty($folder)) {
+            $path = base_path("Routes/api/{$folder}/{$name}.php");
+        }
+        $stub = base_path("stubs/routeTemplate.stub");
 
         if (!File::exists($path)) {
             $stub = File::get($stub);
             $content = str_replace(['{{name}}', '{{folder}}'],[$name, $folder], $stub);
             File::ensureDirectoryExists(dirname($path));
             File::put($path, $content);
-            $this->info("✔️ archivo service creado: " . $path);
+            $this->info("✔️ archivo ruta creado: " . $path);
         } else {
-            $this->warn("⚠️ archivo service ya existe: " . $path);
+            $this->warn("⚠️ archivo ruta ya existe: " . $path);
         }
     }
 }

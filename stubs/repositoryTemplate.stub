@@ -5,4 +5,5 @@ Use App\Interfaces\{{folder}}\{{name}}RepositoryInterface;
 
 class {{name}}Repository implements {{name}}RepositoryInterface
 {
+
 }

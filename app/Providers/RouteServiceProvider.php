@@ -7,6 +7,8 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -32,8 +34,13 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('api')
                 ->prefix('api')
                 ->group(function () {
-                    foreach (glob(base_path('routes/api/*.php')) as $routeFile) {
-                        require $routeFile;
+                    $directory = base_path('routes/api');
+                    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+
+                    foreach ($iterator as $file) {
+                        if ($file->isFile() && $file->getExtension() === 'php') {
+                            require $file->getPathname();
+                        }
                     }
                 });
 

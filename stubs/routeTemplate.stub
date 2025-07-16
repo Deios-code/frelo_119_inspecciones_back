@@ -1,0 +1,8 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\TokenValidator;
+
+Route::group(['prefix' => '', 'middleware' =>  TokenValidator::class, 'controller' => ''], function () {
+    Route::get('/', 'index');
+});
