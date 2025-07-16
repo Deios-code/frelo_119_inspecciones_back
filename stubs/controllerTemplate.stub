@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class {{name}}Controller extends Controller
 {
+    protected $testService;
+
+    public function __construct(TestService $service)
+    {
+        $this->testService = $service;
+    }
+
     public function index(Request $request)
     {
         try {

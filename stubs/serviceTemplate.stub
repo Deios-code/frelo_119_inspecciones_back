@@ -4,5 +4,10 @@ namespace App\Services\{{folder}};
 
 class {{name}}Service
 {
+    protected $testRepository;
 
+    public function __construct(TestRepositoryInterface $repository)
+    {
+        $this->testRepository = $repository;
+    }
 }
