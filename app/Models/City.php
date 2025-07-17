@@ -29,7 +29,7 @@ class City extends Model
 
     public function stations()
     {
-        return $this->hasOne(Station::class, 'st_ci_id');
+        return $this->hasOne(Station::class, 'st_city_id');
     }
 
     public function users()

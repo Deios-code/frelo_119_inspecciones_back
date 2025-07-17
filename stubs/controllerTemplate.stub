@@ -18,7 +18,7 @@ class {{name}}Controller extends Controller
     public function index(Request $request)
     {
         try {
-            return $this->response_success('');
+            return $this->response_success($this->testService->get());
         } catch (\Throwable $th) {
             Log::error('Error en {{name}}Controller@index: ' . $th->getMessage());
             return $this->response_error([$th->getMessage(), $th->getLine(), $th->getFile()]);

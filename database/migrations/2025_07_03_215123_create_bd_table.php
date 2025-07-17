@@ -31,9 +31,9 @@ return new class extends Migration
 
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->enum('us_role', ['SUPERADMIN','ADMIN','INSPECTOR','USER','SYSTEM'])->default('USER');
             $table->string('us_name', 255);
             $table->string('us_last_name', 255);
-            $table->enum('us_type_document', ['CEDULA', 'PASAPORTE']);
             $table->bigInteger('us_document')->unique();
             $table->string('us_address', 255);
             $table->date('us_birthday')->nullable();
@@ -64,7 +64,7 @@ return new class extends Migration
                 ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('set null');
-            $table->foreignId('st_ci_id')
+            $table->foreignId('st_city_id')
                 ->constrained('cities')
                 ->onUpdate('cascade')
                 ->onDelete('set null');

@@ -16,18 +16,30 @@ class AddDip extends Command
      */
     public function handle()
     {
-        $name = ucfirst($this->argument('name'));
+        $ruta = $this->argument('name');
+        $partesRuta = explode('/', $ruta);
+        $name = end($partesRuta);
+        array_pop($partesRuta);
+        $folder = implode(',', $partesRuta);
+        $path = base_path("Routes/api/{$name}.php");
+        if(!empty($folder)) {
+            $path = base_path("Routes/api/{$folder}/{$name}.php");
+        }
 
         $paths = [
-            'interface' => app_path("Interfaces/{$name}RepositoryInterface.php"),
-            'repository' => app_path("Repositories/{$name}Repository.php"),
-            'service' => app_path("Services/{$name}/{$name}Service.php"),
+            'interface' => app_path("Interfaces/{$folder}/{$name}RepositoryInterface.php"),
+            'repository' => app_path("Repositories/{$folder}/{$name}Repository.php"),
+            'service' => app_path("Services/{$folder}/{$name}Service.php"),
+            'route' => app_path("Routes/{$folder}Routes.php"),
+            'controller' => app_path("Http/Controllers/{$name}Controller.php"),
         ];
 
         $stubs = [
             'interface' => base_path("stubs/interface.stub"),
             'repository' => base_path("stubs/repository.stub"),
             'service' => base_path("stubs/service.stub"),
+            'route' => base_path("stubs/routeTemplate.stub"),
+            'controller' => base_path("stubs/controllerTemplate.stub"),
         ];
 
         foreach ($paths as $type => $path) {

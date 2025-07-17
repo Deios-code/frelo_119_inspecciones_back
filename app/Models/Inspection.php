@@ -17,9 +17,9 @@ class Inspection extends Model
         'in_establishment_id'
     ];
 
-    public function inspectors()
+    public function inspector()
     {
-        return $this->belongsTo(User::class, 'in_inspectors_id');
+        return $this->belongsTo(Inspector::class, 'in_inspectors_id');
     }
 
     public function establishment()

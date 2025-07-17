@@ -4,12 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\TokenValidator;
 
 Route::group(['prefix' => '', 'middleware' =>  TokenValidator::class, 'controller' => ''], function () {
-    Route::get('browse', 'browse');
-    Route::get('read/{id}', 'read');
+    Route::get('list', 'getList');
+    Route::get('edit/{id}', 'edit');
+    Route::get('create', 'prepareCreate');
 
     Route::post('add', 'add');
 
-    Route::put('edit/{id}', 'edit');
+    Route::put('update/{id}', 'update');
 
     Route::delete('delete/{id}', 'delete');
 });

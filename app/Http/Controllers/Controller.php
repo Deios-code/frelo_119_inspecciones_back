@@ -29,7 +29,7 @@ class Controller extends BaseController
 
         if (env('APP_DEBUG') == false) {
             return response()->json([
-                'response' => 'Internal error, please try again'
+                'response' => 'Error al realizar la petición. Por favor, inténtelo más tarde.'
             ], $status);
         }
 

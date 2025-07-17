@@ -14,6 +14,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'us_name',
+        'us_role',
         'us_last_name',
         'us_type_document',
         'us_document',
@@ -55,7 +56,7 @@ class User extends Authenticatable
         return $this->belongsTo(City::class, 'us_ci_id');
     }
 
-    public function inspectors()
+    public function inspector()
     {
         return $this->hasOne(Inspector::class, 'ins_id_user');
     }

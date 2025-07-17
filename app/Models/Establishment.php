@@ -13,7 +13,6 @@ class Establishment extends Model
         'es_name_establishment',
         'es_nit',
         'es_phone',
-        'es_department',
         'es_address',
         'es_commune',
         'es_neighborhood',

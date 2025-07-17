@@ -17,12 +17,12 @@ class Station extends Model
         'st_longitude',
         'st_latitude',
         'st_user_id',
-        'st_ci_id'
+        'st_city_id'
     ];
 
     public function city()
     {
-        return $this->belongsTo(City::class, 'st_ci_id');
+        return $this->belongsTo(City::class, 'st_city_id');
     }
 
     public function establishments()
