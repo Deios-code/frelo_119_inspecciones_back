@@ -63,8 +63,7 @@ class EstablishmentService
                     'code' => $inspection->id,
                     'date' => $inspection->created_at ? $inspection->created_at->format('Y-m-d') : null,
                     'status' => $inspection->in_state,
-                    'consecutive' => $inspection->in_consecutive,
-                    // 'inspectors' => $inspection->inspectors->us_name.' '.$inspection->inspectors->us_last_name
+                    'consecutive' => $inspection->in_consecutive
                 ];
             }),
             'owner' => $establishment->user ? $establishment->user->us_name.' '.$establishment->user->us_last_name : null,

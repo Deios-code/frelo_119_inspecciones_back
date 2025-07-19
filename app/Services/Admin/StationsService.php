@@ -21,12 +21,14 @@ class StationsService
         }
 
         return [
-            'code' => $station->id,
-            'name' => $station->st_name,
-            'phone' => $station->st_phone,
-            'address' => $station->st_address,
-            'city' => $station->city ? $station->city->ci_name : null,
-            'userAsigned' => $station->user ? $station->user->us_name.' '.$station->user->us_last_name : null,
+            [
+                'code' => $station->id,
+                'name' => $station->st_name,
+                'phone' => $station->st_phone,
+                'address' => $station->st_address,
+                'city' => $station->city ? $station->city->ci_name : null,
+                'userAsigned' => $station->user ? $station->user->us_name.' '.$station->user->us_last_name : null
+            ]
         ];
     }
 
