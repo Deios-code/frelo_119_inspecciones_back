@@ -8,11 +8,11 @@ use App\Http\Middleware\TokenValidator;
 Route::group(['prefix' => 'admin/inspectors', 'controller' => InspectorsController::class], function () {
     Route::get('list/{idUser}', 'getInspectorsList');
     Route::get('edit/{idInspector}/{idUser}', 'getInfoInspector');
-    Route::get('create', 'prepareCreate');
+    Route::get('create/{idUser}', 'prepareCreateInspector');
 
-    Route::post('add', 'add');
+    Route::post('add', 'addInspector');
 
-    Route::put('update/{id}', 'update');
+    Route::put('update/{id}', 'updateInspector');
 
-    Route::delete('delete/{id}', 'delete');
+    Route::delete('delete/{id}', 'deleteInspector');
 });

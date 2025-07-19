@@ -32,6 +32,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->enum('us_role', ['SUPERADMIN','ADMIN','INSPECTOR','USER','SYSTEM'])->default('USER');
+            $table->enum('us_type_document', ['CEDULA','CEDULA_EXTRANJERIA','PASAPORTE'])->default('CEDULA');
             $table->string('us_name', 255);
             $table->string('us_last_name', 255);
             $table->bigInteger('us_document')->unique();
