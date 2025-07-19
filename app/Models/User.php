@@ -41,7 +41,7 @@ class User extends Authenticatable
         return $this->hasMany(Establishment::class, 'es_us_id');
     }
 
-    public function stations()
+    public function station()
     {
         return $this->hasOne(Station::class, 'st_user_id');
     }

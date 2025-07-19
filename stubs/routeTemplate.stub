@@ -5,7 +5,7 @@ use App\Http\Middleware\TokenValidator;
 
 Route::group(['prefix' => '', 'middleware' =>  TokenValidator::class, 'controller' => ''], function () {
     Route::get('list', 'getList');
-    Route::get('edit/{id}', 'edit');
+    Route::get('edit/{id}', 'getInfo');
     Route::get('create', 'prepareCreate');
 
     Route::post('add', 'add');
