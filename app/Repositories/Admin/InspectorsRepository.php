@@ -22,7 +22,7 @@ class InspectorsRepository implements InspectorsRepositoryInterface
                 $query->where('id', $idInspector);
             })->whereHas('station', function ($query) use ($idUser) {
                 $query->where('st_user_id', $idUser);
-            })->get();
+            })->first();
     }
 
     public function getStationByUserId($idUser)
@@ -32,15 +32,9 @@ class InspectorsRepository implements InspectorsRepositoryInterface
 
     public function addInspector($data, $inspectorData)
     {
-        try {
-            $userId = User::create($data);
-            $this->assignUserStation($userId->id, $inspectorData);
-            DB::commit();
-            return $userId;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return [];
-        }
+        $userId = User::create($data);
+        $this->assignUserStation($userId->id, $inspectorData);
+        return $userId;
 
     }
 

@@ -97,10 +97,10 @@ class InspectorsController extends Controller
             'birthday' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'station_code' => 'required|integer|exists:stations,id',
-            'city_code' => 'required|integer|exists:cities,id',
+            // 'city_code' => 'required|integer|exists:cities,id',
             'user_station' => 'required|integer|exists:stations,st_user_id',
             'range' => 'required|string|in:CAPITAN,TENIENTE,SUBTENIENTE,SARGENTO,CABO,BOMBERO,INSPECTOR',
-            'department_code' => 'required|integer|exists:departments,id',
+            // 'department_code' => 'required|integer|exists:departments,id',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
