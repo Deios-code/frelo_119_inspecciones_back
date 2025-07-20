@@ -12,7 +12,7 @@ Route::group(['prefix' => 'admin/inspectors', 'controller' => InspectorsControll
 
     Route::post('add', 'addInspector');
 
-    Route::put('update/{id}', 'updateInspector');
+    Route::put('update/{idUser}', 'updateInspector');
 
     Route::delete('delete/{id}', 'deleteInspector');
 });

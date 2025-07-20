@@ -1,5 +1,5 @@
 <?php
-
+//* come pingas .|.
 namespace App\Services\Admin;
 
 use App\Interfaces\Admin\EstablishmentRepositoryInterface;
@@ -63,7 +63,8 @@ class EstablishmentService
                     'code' => $inspection->id,
                     'date' => $inspection->created_at ? $inspection->created_at->format('Y-m-d') : null,
                     'status' => $inspection->in_state,
-                    'consecutive' => $inspection->in_consecutive
+                    'consecutive' => $inspection->in_consecutive,
+                    'inspector' => $inspection->inspector ? $inspection->inspector->user->us_name.' '.$inspection->inspector->user->us_last_name : null,
                 ];
             }),
             'owner' => $establishment->user ? $establishment->user->us_name.' '.$establishment->user->us_last_name : null,

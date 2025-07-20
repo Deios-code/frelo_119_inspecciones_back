@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Interfaces\Admin\InspectorsRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -47,22 +48,76 @@ class InspectorsService
 
         $inspector->transform(function ($user) {
             return [
-                'code' => $user->user->id,
-                'name' => $user->user->us_name.' '.$user->user->us_last_name,
-                'phone' => $user->user->us_phone,
-                'email' => $user->user->us_email,
-                'type_document' => $user->user->us_type_document,
-                'document' => $user->user->us_document,
-                'birthday' => $user->user->us_birthday,
-                'address' => $user->user->us_address,
-                'station' => $user->station ? $user->station->st_name : null,
-                'station_address' => $user->station ? $user->station->st_address : null,
-                'station_phone' => $user->station ? $user->station->st_phone : null,
-                'station_captain' => $user->station ? $user->station->user->us_name.' '.$user->station->user->us_last_name : null,
-                'city' => $user->station ? $user->station->city->ci_name : null,
-                'city_code' => $user->station ? $user->station->city->ci_dane : null,
-                'department' => $user->station ? $user->station->city->department->de_name : null,
-                'department_code' => $user->station ? $user->station->city->department->de_dane : null,
+                'user' => [
+                    'code' => $user->user->id,
+                    'name' => $user->user->us_name.' '.$user->user->us_last_name,
+                    'phone' => $user->user->us_phone,
+                    'email' => $user->user->us_email,
+                    'type_document' => $user->user->us_type_document,
+                    'document' => $user->user->us_document,
+                    'birthday' => $user->user->us_birthday,
+                    'address' => $user->user->us_address,
+                    'code_inspector' => $user->id
+                ],
+                'station' => [
+                    'code' => $user->station->id,
+                    'name' => $user->station->st_name,
+                    'address' => $user->station ? $user->station->st_address : null,
+                    'phone' => $user->station ? $user->station->st_phone : null,
+                    'captain' => $user->station ? $user->station->user->us_name.' '.$user->station->user->us_last_name : null,
+                ],
+                'city' => [
+                    'code' => $user->station->city->id,
+                    'name' => $user->station->city->ci_name,
+                ],
+                'department' => [
+                    'code' => $user->station->city->department->code,
+                    'name' => $user->station->city->department->de_name,
+                ],
+                'ranges' =>[
+                    [
+                        'code' => 'CAPITAN',
+                        'name' => 'Capitán'
+                    ],
+                    [
+                        'code' => 'TENIENTE',
+                        'name' => 'Teniente'
+                    ],
+                    [
+                        'code' => 'SUBTENIENTE',
+                        'name' => 'Subteniente'
+                    ],
+                    [
+                        'code' => 'SARGENTO',
+                        'name' => 'Sargento'
+                    ],
+                    [
+                        'code' => 'CABO',
+                        'name' => 'Cabo'
+                    ],
+                    [
+                        'code' => 'BOMBERO',
+                        'name' => 'Bombero'
+                    ],
+                    [
+                        'code' => 'INSPECTOR',
+                        'name' => 'Inspector'
+                    ]
+                ],
+                'type_documents' => [
+                    [
+                        'code' => 'CEDULA',
+                        'name' => 'Cédula de Ciudadanía'
+                    ],
+                    [
+                        'code' => 'CEDULA_EXTRANJERIA',
+                        'name' => 'Cédula de Extranjería'
+                    ],
+                    [
+                        'code' => 'PASAPORTE',
+                        'name' => 'Pasaporte'
+                    ],
+                ]
             ];
         });
 
@@ -176,5 +231,70 @@ class InspectorsService
             'error' => false,
             'msg' => 'Inspector creado exitosamente.'
         ];
+    }
+
+    public function updateInspector($request, $idUser)
+    {
+        try {
+            DB::beginTransaction();
+
+            $stationUser = $this->inspectorsRepository->getStationByUserId($request->user_station);
+            if(!$stationUser || $stationUser->id !== $request->station_code) {
+                return [
+                    'error' => true,
+                    'msg' => 'La estación no pertenece al usuario especificado.'
+                ];
+            }
+
+            $idInspector = $this->inspectorsRepository->verifyInspector($request->code_inspector);
+            if (!$idInspector) {
+                return [
+                    'error' => true,
+                    'msg' => 'relation Inspector not found'
+                ];
+            }
+
+            $userData = [
+                'us_name' => $request->name,
+                'us_role' => 'INSPECTOR',
+                'us_last_name' => $request->last_name,
+                'us_phone' => $request->phone,
+                'us_email' => $request->email,
+                'us_type_document' => $request->type_document,
+                'us_document' => $request->document,
+                'us_birthday' => $request->birthday,
+                'us_address' => $request->address,
+                'us_ci_id' => $request->city_code,
+                'us_habeas_data' => true
+            ];
+
+            if ($request->has('password')) {
+                $userData['us_password'] = Hash::make($request->password);
+            }
+
+            $this->inspectorsRepository->updateInspector($idUser, $userData);
+
+            $inspectorData = [
+                'code_inspector' => $request->code_inspector,
+                'station_code' => $request->station_code,
+                'range' => $request->range,
+                'code_user' => $request->code
+            ];
+
+            $this->inspectorsRepository->updateAssignUserStation($inspectorData);
+
+            DB::commit();
+
+            return [
+                'error' => false,
+                'msg' => 'Inspector actualizado exitosamente.'
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return [
+                'error' => true,
+                'msg' => $e->getMessage()
+            ];
+        }
     }
 }
