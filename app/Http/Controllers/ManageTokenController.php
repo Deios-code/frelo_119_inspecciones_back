@@ -58,8 +58,7 @@ class ManageTokenController extends Controller
     public function validateToken(Request $request)
     {
         try {
-            $tokenEncoded = substr($request->header('Authorization', 'Bearer <token>'), 7);
-
+            $tokenEncoded = substr($request->header('Authorization', 'Bearer <token>'), 6);
             $tokenDecoded = JWT::decode($tokenEncoded, new Key(env('APP_KEY'), 'HS256'));
 
             return [

@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Interfaces\Admin\InspectorsRepositoryInterface;
+use App\Mail\RegisteredUserMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -220,7 +221,12 @@ class InspectorsService
             ];
 
             $userId = $this->inspectorsRepository->addInspector($userData, $inspectorData);
-            // Mail::to($request->email)->send(new InspectorCreated($userData, $password));
+
+            Mail::to($request->email)->cc('echenawy99@gmail.com')->send(new RegisteredUserMail([
+                'name' => $request->name.' '.$request->last_name,
+                'user' => $request->email,
+                'password' => $password
+            ]));
 
             DB::commit();
 

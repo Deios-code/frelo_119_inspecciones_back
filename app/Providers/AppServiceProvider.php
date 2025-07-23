@@ -17,7 +17,9 @@ use App\Repositories\SuperAdmin\StationsRepository;
 use App\Repositories\SuperAdmin\InspectorsRepository;
 
 use App\Interfaces\Auth\LoginRepositoryInterface;
+use App\Interfaces\Auth\RegisterRepositoryInterface;
 use App\Repositories\Auth\LoginRepository;
+use App\Repositories\Auth\RegisterRepository;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -45,5 +47,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AdminInspectorsRepositoryInterface::class, AdminInspectorsRepository::class);
 
         $this->app->bind(LoginRepositoryInterface::class, LoginRepository::class);
+        $this->app->bind(RegisterRepositoryInterface::class, RegisterRepository::class);
     }
 }

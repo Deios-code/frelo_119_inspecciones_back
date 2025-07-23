@@ -25,14 +25,14 @@ class LoginService
         if (!$user) {
             return [
                 'error' => true,
-                'message' => 'El usuario no existe'
+                'msg' => 'Datos no válidos, por favor corregir'
             ];
         }
 
-        if (!Hash::check($request->password, $user->password)) {
+        if (!Hash::check($request->password, $user->us_password)) {
             return [
                 'error' => true,
-                'message' => 'Credenciales incorrectas'
+                'msg' => 'Credenciales incorrectas'
             ];
         }
 
@@ -41,10 +41,15 @@ class LoginService
 
         return[
             'error' => false,
-            'message' => 'Login successful',
+            'msg' => 'Login successful',
             'data' => [
-                'user' => $user,
-                'token' => $token
+                'user' => [
+                    'code' => $user->id,
+                    'name' => $user->us_name. ' ' . $user->us_lastname,
+                    'email' => $user->us_email,
+                    'role' => $user->us_role
+                ],
+                'access_token' => $token
             ]
         ];
     }
