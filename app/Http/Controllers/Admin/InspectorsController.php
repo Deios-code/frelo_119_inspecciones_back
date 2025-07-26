@@ -54,8 +54,8 @@ class InspectorsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'phone' => 'required|integer',
-            'email' => 'required|string|max:255',
+            'phone' => 'required|integer|unique:users,us_phone',
+            'email' => 'required|string|max:255|unique:users,us_email',
             'type_document' => 'required|string|in:CEDULA,CEDULA_EXTRANJERIA,PASAPORTE',
             'document' => 'required|integer',
             'birthday' => 'required|string|max:255',

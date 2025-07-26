@@ -23,7 +23,6 @@ class User extends Authenticatable
         'us_address',
         'us_phone',
         'us_habeas_data',
-        'us_exoneration',
         'us_email',
         'us_password'
     ];

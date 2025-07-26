@@ -40,7 +40,6 @@ return new class extends Migration
             $table->date('us_birthday')->nullable();
             $table->bigInteger('us_phone')->unique();
             $table->enum('us_habeas_data', ['SI', 'NO']);
-            $table->enum('us_exoneration', ['SI', 'NO'])->nullable();
             $table->string('us_email', 255)->unique();
             $table->string('us_password', 255);
             $table->foreignId('us_ci_id')
@@ -75,12 +74,13 @@ return new class extends Migration
         Schema::create('establishments', function (Blueprint $table) {
             $table->id();
             $table->string('es_name_establishment', 255);
-            $table->integer('es_nit')->unique();
+            $table->string('es_nit', 50)->unique();
             $table->bigInteger('es_phone')->unique();
             $table->string('es_address', 255);
             $table->string('es_commune', 255);
             $table->string('es_neighborhood', 255);
             $table->string('es_email_establishment', 255)->unique();
+            $table->enum('es_exoneration', ['SI', 'NO']);
             $table->foreignId('es_station_id')
                 ->nullable()
                 ->constrained('stations')

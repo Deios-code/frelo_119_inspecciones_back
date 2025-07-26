@@ -1,13 +1,36 @@
 <?php
 
 namespace App\Services\{{folder}};
+use App\Services\ManageToken\ManageTokenService;
+use Illuminate\Support\Facades\Log;
 
 class {{name}}Service
 {
     protected $testRepository;
+    private $manageTokenService;
 
-    public function __construct(TestRepositoryInterface $repository)
+    public function __construct(TestRepositoryInterface $repository, ManageTokenService $manageTokenService)
     {
         $this->testRepository = $repository;
+        $this->manageTokenService = $manageTokenService;
+    }
+
+    public function example($request)
+    {
+        try {
+            $userId = $this->manageTokenService->getIdbyToken($request);
+            return [
+                'error' => false,
+                'data' => []
+            ];
+        } catch (\Throwable $th) {
+            Log::error('Error en {{name}}Service@example: ' . $th->getMessage());
+            return [
+                'error' => true,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ];
+        }
     }
 }

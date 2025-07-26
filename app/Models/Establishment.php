@@ -18,6 +18,7 @@ class Establishment extends Model
         'es_neighborhood',
         'es_email_establishment',
         'es_station_id',
+        'es_exoneration',
         'es_us_id',
         'es_ci_id'
     ];

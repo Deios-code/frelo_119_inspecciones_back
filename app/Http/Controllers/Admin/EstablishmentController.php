@@ -20,7 +20,7 @@ class EstablishmentController extends Controller
         try {
             return $this->response_success($this->establishmentService->getEstablishmentsList($idUser));
         } catch (\Throwable $th) {
-            Log::error('Error en EstablishmentController@getEstablishmentsList: ' . $th->getMessage());
+            Log::error('Error en AdminEstablishmentController@getEstablishmentsList: ' . $th->getMessage());
             return $this->response_error([$th->getMessage(), $th->getLine(), $th->getFile()]);
         }
     }
@@ -30,7 +30,7 @@ class EstablishmentController extends Controller
         try {
             return $this->response_success($this->establishmentService->getInfoEstablishment($id, $idUser));
         } catch (\Throwable $th) {
-            Log::error('Error en EstablishmentController@getInfoEstablishment: ' . $th->getMessage());
+            Log::error('Error en AdminEstablishmentController@getInfoEstablishment: ' . $th->getMessage());
             return $this->response_error([$th->getMessage(), $th->getLine(), $th->getFile()]);
         }
     }
