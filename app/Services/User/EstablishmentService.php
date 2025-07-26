@@ -43,9 +43,10 @@ class EstablishmentService
         return $establishments;
     }
 
-    public function getInfoEstablishment($id, $userId)
+    public function getInfoEstablishment($request, $establishmentId)
     {
-        $establishment = $this->EstablishmentRepository->getInfoEstablishment($id, $userId);
+        $userId = $this->manageTokenService->getIdbyToken($request);
+        $establishment = $this->EstablishmentRepository->getInfoEstablishment($establishmentId, $userId);
 
         if (!$establishment) {
             return null;
