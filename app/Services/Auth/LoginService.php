@@ -3,18 +3,14 @@
 namespace App\Services\Auth;
 
 use App\Interfaces\Auth\LoginRepositoryInterface;
-use App\Services\ManageToken\ManageTokenService;
-use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Hash;
 
 class LoginService
 {
     protected $loginRepository;
-    private $manageTokenService;
 
-    public function __construct(LoginRepositoryInterface $repository, ManageTokenService $manageTokenService)
+    public function __construct(LoginRepositoryInterface $repository)
     {
-        $this->manageTokenService = $manageTokenService;
         $this->loginRepository = $repository;
     }
 
@@ -36,8 +32,6 @@ class LoginService
             ];
         }
 
-        //* generating token
-        $token = $this->manageTokenService->generateToken($user->id);
 
         return[
             'error' => false,
@@ -48,8 +42,7 @@ class LoginService
                     'name' => $user->us_name. ' ' . $user->us_lastname,
                     'email' => $user->us_email,
                     'role' => $user->us_role
-                ],
-                'access_token' => $token
+                ]
             ]
         ];
     }

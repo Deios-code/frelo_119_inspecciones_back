@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+//* controllers
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ManageTokenController;
+
+//* services
 use App\Services\Auth\LoginService;
 use App\Services\Auth\RegisterService;
+
+//* libraries
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -13,10 +19,12 @@ use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     protected $loginService;
+    protected ManageTokenController $manageToken;
 
-    public function __construct(LoginService $service)
+    public function __construct(LoginService $service, ManageTokenController $manageToken)
     {
         $this->loginService = $service;
+        $this->manageToken = $manageToken;
     }
 
     public function login(Request $request)
@@ -37,7 +45,32 @@ class AuthController extends Controller
                 return $this->response_error($response['msg'], 500);
             }
 
-            return $this->response_success($response['data']);
+            //* genetating access token
+            $token = $this->manageToken->generateToken($response['data']['user']['code']);
+
+            $data = $response['data'];
+
+            $cookie = cookie(
+                'refresh_token',
+                $token['refresh_token'],
+                60 * 24 * 7, // 7 days
+                '/',
+                '',
+                false, // en desarrollo el secure es false (en desarrollo no trabajamos con https), en producción debería ser true
+                true, // en desarrollo el httpOnly es true, para evitar que el js pueda acceder a la cookie y en producción debería ser true
+                false, // Secure
+                'lax' // en desarrollo el SameSite es lax, para permitir el acceso desde el frontend, en producción debería ser none
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Login successful',
+                'data' => [
+                    'access_token' => $token['access_token'],
+                    'user' => $data['user'],
+                ]
+            ])->cookie($cookie);
+
         } catch (\Throwable $th) {
             Log::error('Error en LoginController@login: ' . $th->getMessage());
             return $this->response_error([$th->getMessage(), $th->getLine(), $th->getFile()]);
