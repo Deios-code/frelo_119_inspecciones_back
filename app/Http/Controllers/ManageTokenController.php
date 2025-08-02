@@ -155,6 +155,10 @@ class ManageTokenController extends Controller
             $tokenToInactive = RefreshToken::where('token', $refreshTokenHash)
                 ->first();
 
+            if (!$tokenToInactive) {
+                return response()->json(['error' => 'Invalid or expired refresh token'], 401);
+            }
+
             $tokenToInactive->revoked = false;
             $tokenToInactive->save();
 
@@ -171,8 +175,7 @@ class ManageTokenController extends Controller
         $newAccessToken = JWT::encode($accessPayload, env('JWT_SECRET'), 'HS256');
 
         return $this->response_success([
-            'access_token' => $newAccessToken,
-            'expires_at' => 15 * 60,
+            'access_token' => $newAccessToken
         ]);
     }
 }
