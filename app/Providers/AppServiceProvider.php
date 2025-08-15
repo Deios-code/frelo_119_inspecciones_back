@@ -12,9 +12,11 @@ use App\Repositories\Admin\InspectorsRepository as AdminInspectorsRepository;
 use App\Interfaces\SuperAdmin\EstablishmentRepositoryInterface;
 use App\Interfaces\SuperAdmin\InspectorsRepositoryInterface;
 use App\Interfaces\SuperAdmin\StationsRepositoryInterface;
+use App\Interfaces\SuperAdmin\DynamicFormRepositoryInterface;
 use App\Repositories\SuperAdmin\EstablishmentRepository;
 use App\Repositories\SuperAdmin\StationsRepository;
 use App\Repositories\SuperAdmin\InspectorsRepository;
+use App\Repositories\SuperAdmin\DynamicFormRepository;
 
 use App\Interfaces\Auth\LoginRepositoryInterface;
 use App\Interfaces\Auth\RegisterRepositoryInterface;
@@ -45,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StationsRepositoryInterface::class, StationsRepository::class);
         $this->app->bind(EstablishmentRepositoryInterface::class, EstablishmentRepository::class);
         $this->app->bind(InspectorsRepositoryInterface::class, InspectorsRepository::class);
+        $this->app->bind(DynamicFormRepositoryInterface::class, DynamicFormRepository::class);
 
         $this->app->bind(AdminStationsRepositoryInterface::class, AdminStationsRepository::class);
         $this->app->bind(AdminEstablishmentRepositoryInterface::class, AdminEstablishmentRepository::class);

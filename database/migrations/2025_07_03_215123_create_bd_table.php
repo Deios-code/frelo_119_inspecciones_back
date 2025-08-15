@@ -136,7 +136,9 @@ return new class extends Migration
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
             $table->string('se_name',255);
-            $table->integer('se_percentage');
+            $table->integer('se_score');
+            $table->boolean('se_quantifiable');
+            $table->boolean('se_removable');
             $table->foreignId('se_fo_id')
                 ->constrained('forms')
                 ->onUpdate('cascade')
@@ -222,8 +224,7 @@ return new class extends Migration
         Schema::create('options_answer', function (Blueprint $table) {
             $table->id();
             $table->string('op_text',255);
-            $table->enum('op_correct',['SI','NO']);
-            $table->string('op_file',255)->nullable();
+            $table->integer('op_score');
             $table->foreignId('op_qu_id')
                 ->nullable()
                 ->constrained('questions')
@@ -239,6 +240,7 @@ return new class extends Migration
 
         Schema::create('user_options_answers', function (Blueprint $table) {
             $table->id();
+            $table->string('uso_file',255)->nullable();
             $table->foreignId('uso_us_id')
                 ->nullable()
                 ->constrained('users')

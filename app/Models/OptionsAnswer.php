@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class OptionsAnswer extends Model
 {
-    use HasFactory;
+    protected $table = 'options_answer';
 
     protected $fillable = [
         'op_text',
-        'op_correct',
-        'op_file',
+        'op_score',
         'op_qu_id',
         'op_usq_id'
     ];
