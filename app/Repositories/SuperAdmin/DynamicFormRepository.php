@@ -150,4 +150,47 @@ class DynamicFormRepository implements DynamicFormRepositoryInterface
             throw $th;
         }
     }
+
+    public function findFormWithTree(int $id)
+    {
+        return Form::with([
+            'sections' => fn($q) => $q->orderBy('id'),
+            'sections.questions' => fn($q) => $q->orderBy('id'),
+            'sections.questions.options' => fn($q) => $q->orderBy('id'),
+        ])->findOrFail($id);
+    }
+
+    public function listForms(?int $moduleId, bool $editable): array
+    {
+        return Form::when($moduleId, fn($q) => $q->where('fo_processes_id', $moduleId))
+            ->when(isset($editable), fn($q) => $q->where('fo_edit', $editable))
+            ->orderByDesc('id')
+            ->get()
+            ->map(fn($f) => [
+                'id' => $f->id,
+                'name' => $f->fo_name,
+                'type' => $f->fo_type,
+                'processId' => $f->fo_processes_id
+            ])->toArray();
+    }
+
+    // Para respuestas:
+    public function createUserForm(array $data)
+    {
+        return UserForm::create($data);
+    }
+    public function findQuestionsByIds(array $ids)
+    {
+        return Question::with('options')->whereIn('id', $ids)->get();
+    }
+    public function createUserQuestion(array $data)
+    {
+        return UserQuestion::create($data);
+    }
+    public function attachUserOptions(int $userQuestionId, array $optionIds)
+    {
+        foreach ($optionIds as $opId) {
+            UserOptionsAnswer::create(['uoa_user_question_id' => $userQuestionId, 'uoa_option_id' => $opId]);
+        }
+    }
 }

@@ -28,6 +28,11 @@ class Question extends Model
         return $this->hasMany(UserQuestion::class, 'usq_qu_id');
     }
 
+    public function options()
+    {
+        return $this->hasMany(OptionsAnswer::class, 'op_qu_id');
+    }
+
     public function optionsAnswers()
     {
         return $this->hasMany(OptionsAnswer::class, 'op_qu_id');

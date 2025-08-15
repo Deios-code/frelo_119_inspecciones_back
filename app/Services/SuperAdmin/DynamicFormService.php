@@ -16,12 +16,30 @@ class DynamicFormService
         $this->dynamicFormRepository = $repository;
     }
 
-
-    public function createForm(array $data): array
+    public function createFullForm(array $payload): array
     {
         try {
             $this->dynamicFormRepository->startTransaction();
 
+            $formRes = $this->createForm($payload['inputValues']);
+            if (!$formRes['process']) throw new \Exception($formRes['message']);
+
+            $secRes = $this->createSections($payload['sections'], $formRes['data']->id);
+            if (!$secRes['process']) throw new \Exception($secRes['message']);
+
+            $this->dynamicFormRepository->commitTransaction();
+
+            return ['process' => true, 'message' => 'Form & sections created', 'data' => $formRes['data']];
+        } catch (\Throwable $th) {
+            $this->dynamicFormRepository->rollBackTransaction();
+            throw $th;
+        }
+    }
+
+
+    public function createForm(array $data): array
+    {
+        try {
             //* creating form
             $form = $this->dynamicFormRepository->createForm([
                 'fo_name' => $data['formName'],
@@ -44,7 +62,6 @@ class DynamicFormService
                 'data' => $form['data']
             ];
         } catch (\Throwable $th) {
-            $this->dynamicFormRepository->rollBackTransaction();
             throw $th;
         }
     }
@@ -82,14 +99,11 @@ class DynamicFormService
                 }
             }
 
-            $this->dynamicFormRepository->commitTransaction();
-
             return [
                 'process' => true,
                 'message' => 'Sections created successfully'
             ];
         } catch (\Throwable $th) {
-            $this->dynamicFormRepository->rollBackTransaction();
             throw $th;
         }
     }
@@ -112,7 +126,7 @@ class DynamicFormService
                     'qu_nature' => $question['isQuizQuestion'] ? 'CUANTITATIVO' : 'CUALITATIVA',
                     'qu_type' => match ($question['type']) {
                         'text' => 'TEXTO',
-                        'textarea' => 'TEXO_LARGO',
+                        'textarea' => 'TEXTO_LARGO',
                         'number' => 'NUMERO',
                         'file' => 'ARCHIVO',
                         'radio' => 'UNICA',
@@ -166,7 +180,6 @@ class DynamicFormService
                 'message' => 'Questions created successfully'
             ];
         } catch (\Throwable $th) {
-            $this->dynamicFormRepository->rollBackTransaction();
             throw $th;
         }
     }
@@ -196,7 +209,6 @@ class DynamicFormService
                 'message' => 'Options created successfully'
             ];
         } catch (\Throwable $th) {
-            $this->dynamicFormRepository->rollBackTransaction();
             throw $th;
         }
     }
@@ -206,6 +218,100 @@ class DynamicFormService
         try {
             return $this->dynamicFormRepository->findProcess();
         } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function getFormSchema(int $formId): array
+    {
+        $form = $this->dynamicFormRepository->findFormWithTree($formId);
+        // mapear a contrato front:
+        return [
+            'id' => $form->id,
+            'name' => $form->fo_name,
+            'type' => $form->fo_type, // CUANTITATIVO/CUALITATIVO
+            'processId' => $form->fo_processes_id,
+            'sections' => $form->sections->map(function ($s) {
+                return [
+                    'id' => $s->id,
+                    'title' => $s->se_name,
+                    'isQuantifiable' => (bool)$s->se_quantifiable,
+                    'score' => (int)$s->se_score,
+                    'questions' => $s->questions->map(function ($q) {
+                        return [
+                            'id' => $q->id,
+                            'type' => $this->mapToFrontType($q->qu_type), // TEXTO->text, TEXTO_LARGO->textarea, etc.
+                            'label' => $q->qu_statement,
+                            'required' => (bool)$q->qu_required,
+                            'score' => (int)$q->qu_score,
+                            'isQuizQuestion' => (bool)$q->qu_is_quiz,
+                            'options' => $q->options->map(fn($o) => [
+                                'id' => $o->id,
+                                'label' => $o->op_text,
+                                'score' => (int)$o->op_score
+                            ])->values(),
+                        ];
+                    })->values(),
+                ];
+            })->values(),
+        ];
+    }
+
+    private function mapToFrontType(string $dbType): string
+    {
+        return match ($dbType) {
+            'TEXTO' => 'text',
+            'TEXTO_LARGO' => 'textarea',
+            'NUMERO' => 'number',
+            'ARCHIVO' => 'file',
+            'UNICA' => 'radio',
+            'MULTIPLE' => 'checkbox',
+            default => 'text',
+        };
+    }
+
+    public function listForms(?int $moduleId, bool $editable): array
+    {
+        return $this->dynamicFormRepository->listForms($moduleId, $editable);
+    }
+
+    public function submitResponses(int $formId, array $payload): array
+    {
+        $this->dynamicFormRepository->startTransaction();
+        try {
+            // crea UserForm
+            $uf = $this->dynamicFormRepository->createUserForm([
+                'uf_form_id' => $formId,
+                'uf_client_id' => $payload['clientId'] ?? null,
+            ]);
+
+            // por performance, indexa tipos de pregunta
+            $questions = $this->dynamicFormRepository->findQuestionsByIds(
+                collect($payload['answers'])->pluck('questionId')->all()
+            )->keyBy('id');
+
+            foreach ($payload['answers'] as $ans) {
+                $q = $questions[$ans['questionId']];
+                // crea UserQuestion con value (si aplica)
+                $uq = $this->dynamicFormRepository->createUserQuestion([
+                    'uq_user_form_id' => $uf->id,
+                    'uq_question_id'  => $q->id,
+                    'uq_value'        => $ans['value'] ?? null, // para text/textarea/number
+                ]);
+
+                // si radio/checkbox, guarda las opciones elegidas
+                if (!empty($ans['optionIds'])) {
+                    $this->dynamicFormRepository->attachUserOptions($uq->id, $ans['optionIds']);
+                }
+
+                // si file, guarda y asocia (puedes usar storage y una tabla UserFiles)
+                // ...
+            }
+
+            $this->dynamicFormRepository->commitTransaction();
+            return ['process' => true, 'message' => 'Responses saved', 'data' => ['userFormId' => $uf->id]];
+        } catch (\Throwable $th) {
+            $this->dynamicFormRepository->rollBackTransaction();
             throw $th;
         }
     }

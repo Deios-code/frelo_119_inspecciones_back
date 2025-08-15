@@ -30,7 +30,7 @@ class DynamicFormController extends Controller
             $validator = Validator::make($request->all(), [
                 //* form rules
                 'inputValues.formName' => 'required|string|max:255',
-                'inputValues.formType' => 'required|string|in:questionnaire,other',
+                'inputValues.formType' => 'required|string',
                 'inputValues.formModule' => 'required|integer|exists:processes,id',
 
                 //* section rules
@@ -59,18 +59,10 @@ class DynamicFormController extends Controller
             $requestData = $request->all();
 
             //* from creation process
-            $result = $this->dynamicFormService->createForm($requestData['inputValues']);
+            $result = $this->dynamicFormService->createFullForm($requestData);
 
             if (!$result['process']) {
                 return $this->response_error($result['message']);
-            }
-
-            //* section creation process
-            $formId = $result['data']->id;
-            $sectionResult = $this->dynamicFormService->createSections($requestData['sections'], $formId);
-
-            if (!$sectionResult['process']) {
-                return $this->response_error($sectionResult['message']);
             }
 
             return $this->response_success($result['message']);
@@ -93,6 +85,52 @@ class DynamicFormController extends Controller
                 'line' => $th->getLine(),
                 'file' => $th->getFile()
             ]);
+        }
+    }
+
+    public function getFormSchema($formId)
+    {
+        try {
+            $schema = $this->dynamicFormService->getFormSchema((int)$formId);
+            return $this->response_success($schema);
+        } catch (\Throwable $th) {
+            return $this->response_error(['message' => $th->getMessage()]);
+        }
+    }
+
+    public function listForms(Request $req)
+    {
+        try {
+            $forms = $this->dynamicFormService->listForms(
+                moduleId: $req->query('moduleId'),
+                editable: filter_var($req->query('editable', 'true'), FILTER_VALIDATE_BOOLEAN)
+            );
+            return $this->response_success($forms);
+        } catch (\Throwable $th) {
+            return $this->response_error(['message' => $th->getMessage()]);
+        }
+    }
+
+    public function submitResponses($formId, Request $request)
+    {
+        try {
+            $payload = $request->all();
+            // valida estructura mínima
+            $validator = Validator::make($payload, [
+                'clientId' => 'nullable|integer',
+                'answers'  => 'required|array|min:1',
+                'answers.*.questionId' => 'required|integer|exists:questions,id',
+                // si radio/checkbox => optionIds
+                'answers.*.optionIds'  => 'array',
+                // si text/textarea/number => value
+                'answers.*.value'      => 'nullable',
+            ]);
+            if ($validator->fails()) return $this->response_error($validator->errors());
+
+            $res = $this->dynamicFormService->submitResponses((int)$formId, $payload);
+            return $this->response_success($res);
+        } catch (\Throwable $th) {
+            return $this->response_error(['message' => $th->getMessage()]);
         }
     }
 }

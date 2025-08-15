@@ -21,4 +21,9 @@ class Form extends Model
     {
         return $this->belongsTo(Process::class, 'fo_process_id');
     }
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class, 'se_fo_id');
+    }
 }
