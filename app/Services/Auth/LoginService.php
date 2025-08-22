@@ -33,16 +33,40 @@ class LoginService
         }
 
 
-        return[
+        return [
             'error' => false,
             'msg' => 'Login successful',
             'data' => [
                 'user' => [
                     'code' => $user->id,
-                    'name' => $user->us_name. ' ' . $user->us_lastname,
+                    'name' => $user->us_name . ' ' . $user->us_lastname,
                     'email' => $user->us_email,
                     'role' => $user->us_role
                 ]
+            ]
+        ];
+    }
+
+
+    public function getUserInfo($userId)
+    {
+        $user = $this->loginRepository->getUserInfo($userId);
+
+        if (!$user) {
+            return [
+                'error' => true,
+                'message' => 'User not found'
+            ];
+        }
+
+        return [
+            'error' => false,
+            'message' => 'User found',
+            'data' => [
+                'code' => $user->id,
+                'name' => $user->us_name . ' ' . $user->us_last_name,
+                'email' => $user->us_email,
+                'role' => $user->us_role
             ]
         ];
     }

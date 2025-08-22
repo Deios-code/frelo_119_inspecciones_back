@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\TokenValidator;
+use App\Http\Controllers\ManageTokenController;
 
 // Route::group(['middleware' =>  TokenValidator::class, 'controller' => ''], function () {
 Route::group(['controller' => AuthController::class], function () {
@@ -20,4 +20,8 @@ Route::group(['controller' => AuthController::class], function () {
 
         Route::post('/', 'register');
     });
+
+    Route::get('/auth/refresh',  [ManageTokenController::class, 'refreshAccessToken']);
+    Route::get('/auth/validateToken',  [ManageTokenController::class, 'validateTokenAPI']);
+    Route::get('/auth/userInfo/{userId}',  [AuthController::class, 'getUserInfo']);
 });

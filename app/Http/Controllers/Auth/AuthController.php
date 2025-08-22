@@ -123,4 +123,20 @@ class AuthController extends Controller
             return $this->response_error([$th->getMessage(), $th->getLine(), $th->getFile()]);
         }
     }
+
+    public function getUserInfo($userId)
+    {
+        try {
+            $user = $this->loginService->getUserInfo($userId);
+
+            if ($user['error']) {
+                return $this->response_error($user['message'], 404);
+            }
+
+            return $this->response_success($user['data']);
+        } catch (\Throwable $th) {
+            Log::error('Error en authController@getUserInfo: ' . $th->getMessage());
+            return $this->response_error([$th->getMessage(), $th->getLine(), $th->getFile()]);
+        }
+    }
 }

@@ -10,4 +10,10 @@ class LoginRepository implements LoginRepositoryInterface
     {
         return User::where('us_email', $email)->first();
     }
+
+
+    public function getUserInfo($userId)
+    {
+        return User::find($userId);
+    }
 }
