@@ -46,7 +46,7 @@ class AuthController extends Controller
             }
 
             //* genetating access token
-            $token = $this->manageToken->generateToken($response['data']['user']['code']);
+            $token = $this->manageToken->generateToken($response['data']['user']['code'], true);
 
             $data = $response['data'];
 

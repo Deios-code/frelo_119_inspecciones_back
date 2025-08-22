@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
-    use HasFactory;
+
+    protected $table = 'questions';
 
     protected $fillable = [
         'qu_statement',
@@ -26,6 +26,11 @@ class Question extends Model
     public function userQuestions()
     {
         return $this->hasMany(UserQuestion::class, 'usq_qu_id');
+    }
+
+    public function options()
+    {
+        return $this->hasMany(OptionsAnswer::class, 'op_qu_id');
     }
 
     public function optionsAnswers()

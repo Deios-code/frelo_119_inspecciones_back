@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Section extends Model
 {
-    use HasFactory;
+
+    protected $table = 'sections';
 
     protected $fillable = [
         'se_name',
-        'se_percentage',
-        'se_fo_id'
+        'se_score',
+        'se_quantifiable',
+        'se_removable',
+        'se_fo_id',
     ];
 
     public function form()
@@ -24,5 +26,4 @@ class Section extends Model
     {
         return $this->hasMany(Question::class, 'qu_se_id');
     }
-
 }

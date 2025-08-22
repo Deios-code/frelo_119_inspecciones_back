@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Form extends Model
 {
-    use HasFactory;
+
+    protected $table = 'forms';
 
     protected $fillable = [
         'fo_name',
@@ -20,5 +20,10 @@ class Form extends Model
     public function process()
     {
         return $this->belongsTo(Process::class, 'fo_process_id');
+    }
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class, 'se_fo_id');
     }
 }
